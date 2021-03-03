@@ -1,4 +1,5 @@
 import random 
+import pandas as pd
 
 class Student:
     """Summary of the Student class 
@@ -33,7 +34,7 @@ class Student:
     def generateTheta(self):
         """ Randomly generate one's learning ability if not given
         Arg: A Student
-        Modify: Update dictionary of if theta function is none
+        Modify: Update the subabilities dictionary if theta function is none
             ex. {1: [0.39, 0.26], 2: [0.08, 0.75]} if numberConcepts = 2
             Specifically, 0.26 means the student’s ability on a question related
             to concept 1 after completing a question related to concept 2.
@@ -52,11 +53,11 @@ class Student:
         """ Randomly generate the student's response to a given problem set  
         Arg: A Student
         Modify: None
-        Return: A 3d list (numberOfProblems * numberOfConcepts^2) of the binary 
-            result of correctness
+        Return: A 3d list (numberOfProblems-1 * numberOfConcepts^2) of the 
+            binary result of correctness
         """
         answers = []
-        for i in range(self.numberOfQuestions):
+        for i in range(self.numberOfQuestions - 1):
             answers.append([])
             for j in range(self.numberOfConcepts):
                 answers[i].append([])
@@ -65,12 +66,27 @@ class Student:
         return answers
 
     def saveData(self):
-    # TODO Add the student's information to a larger collector
-        return
+        """ Save the student's theta and response to a csv  
+        Arg: A Student
+        Modify: In the csv file, the row represents the subablities on concept i
+            while the column represents the questions being tested. Note: Since 
+            the first question doesn't have any previous concepts being tested. 
+            We will save the subabilities (theta) there.
+        Return: A csv file
+        """
+        subablities = []
+        subablities.append(list(self.theta.values()))
+        response = self.generateAnswers()
+        studentData = subablities + response
+        df = pd.DataFrame(data = studentData)
+        df.columns += 1
+        # print the dataframe for debug purposes
+        print(df)
+        return df.to_csv('student.csv')
 
+# Test
 Patrick = Student(3,2)
-print(Patrick.numberOfConcepts)
-print(Patrick.numberOfQuestions)
+print("Number of concepts: " + str(Patrick.numberOfConcepts))
+print("Number of questions: " + str(Patrick.numberOfQuestions))
 Patrick.generateTheta()
-print(Patrick.theta)
-print(Patrick.generateAnswers())
+Patrick.saveData()
