@@ -7,7 +7,7 @@ class Student():
         self.c_number = c_number
 
     def generate_theta(self):
-        if self.theta_f:
-             pass # use theta_f
+       if self.theta_f:
+            not none, pass
         else:
             self.theta_dict = {i:np.random.uniform(self.c_number) for i in range (self.c_number)}
