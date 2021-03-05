@@ -7,7 +7,7 @@ class Student():
         self.theta_f = theta_f
         self.c_number = c_number
         
-    generate_theta(self):
+    def generate_theta(self):
        if self.theta_f:
             not none, pass
         else:
