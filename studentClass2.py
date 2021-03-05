@@ -1,14 +1,13 @@
 import numpy as np
-import random
 
 class Student():
-    def _init_(self, n_questions, theta_f=None, c_number):
+    def __init__(self, n_questions, c_number, theta_f=None):
         self.n_questions = n_questions
         self.theta_f = theta_f
         self.c_number = c_number
-        
-    generate_theta(self):
-       if self.theta_f:
-            not none, pass
+
+    def generate_theta(self):
+        if self.theta_f:
+             pass # use theta_f
         else:
-            tuple_Sskills = [[(random.random()) for i in range (c_number)] for i in range (c_number)]
+            self.theta_dict = {i:np.random.uniform(self.c_number) for i in range (self.c_number)}

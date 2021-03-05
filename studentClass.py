@@ -1,23 +1,23 @@
-import random 
+import random
 import pandas as pd
 
 class Student:
-    """Summary of the Student class 
+    """Summary of the Student class
 
-    A student class contains learning information that worth consider for the 
-    question recommending model. We define sub-ability θ_ij ∈ [0, 1] to be a 
-    student’s ability on a question testing concept j that is preceded by a 
-    question testing concept i. 
+    A student class contains learning information that worth consider for the
+    question recommending model. We define sub-ability θ_ij ∈ [0, 1] to be a
+    student’s ability on a question testing concept j that is preceded by a
+    question testing concept i.
 
     We use 0 to represent a wrong answer, and 1 for the correct one
-    
-    Attributes: 
+
+    Attributes:
         numberOfQuestions: An integer count of questions being asked
         numberOfConcepts: An integer count of concepts being tested
-        theta: A dictionary represents the generating function of the student's 
-            subabilities on each concept. Key: An integer, value: Float lists 
+        theta: A dictionary represents the generating function of the student's
+            subabilities on each concept. Key: An integer, value: Float lists
 
-    Methods: 
+    Methods:
         generateTheta:
         generateAnswers:
         saveData:
@@ -25,11 +25,11 @@ class Student:
 
     # Define class variable here (ex. className)
 
-    def __init__(self, numberOfQuestions, numberOfConcepts, theta=None):
+    def __init__(self, numberOfQuestions=10, numberOfConcepts=2, theta_f=None):
         """ Defining the properties of the student class """
         self.numberOfQuestions = numberOfQuestions
         self.numberOfConcepts = numberOfConcepts
-        self.theta = theta
+        self.theta_f = theta_f
 
     def generateTheta(self):
         """ Randomly generate one's learning ability if not given
@@ -38,22 +38,23 @@ class Student:
             ex. {1: [0.39, 0.26], 2: [0.08, 0.75]} if numberConcepts = 2
             Specifically, 0.26 means the student’s ability on a question related
             to concept 1 after completing a question related to concept 2.
-        Return: None 
+        Return: None
         """
-        if self.theta is None:
+        if self.theta_f:
+            pass
+        else:
             key = [i for i in range(1,self.numberOfConcepts+1)]
             value = []
-            for i in range(1,self.numberOfConcepts+1):
-                subAbilities = [round(random.random(), 2) for j 
-                        in range(1,self.numberOfConcepts+1)]
+            for i in key:
+                subAbilities = [round(random.random(), 2) for j in key]
                 value.append(subAbilities)
             self.theta = dict(zip(key, value))
 
     def generateAnswers(self):
-        """ Randomly generate the student's response to a given problem set  
+        """ Randomly generate the student's response to a given problem set
         Arg: A Student
         Modify: None
-        Return: A 3d list (numberOfProblems-1 * numberOfConcepts^2) of the 
+        Return: A 3d list (numberOfProblems-1 * numberOfConcepts^2) of the
             binary result of correctness
         """
         answers = []
@@ -66,11 +67,11 @@ class Student:
         return answers
 
     def saveData(self):
-        """ Save the student's theta and response to a csv  
+        """ Save the student's theta and response to a csv
         Arg: A Student
         Modify: In the csv file, the row represents the subablities on concept i
-            while the column represents the questions being tested. Note: Since 
-            the first question doesn't have any previous concepts being tested. 
+            while the column represents the questions being tested. Note: Since
+            the first question doesn't have any previous concepts being tested.
             We will save the subabilities (theta) there.
         Return: A csv file
         """
