@@ -19,7 +19,7 @@ class Student:
             subabilities on each concept. Key: An integer, value: Float lists
 
     Methods:
-        generateTheta: Generate a theta function if we have 
+        generateTheta: Generate a theta function if we have
         generateAnswers:
         saveData:
     """
@@ -44,12 +44,18 @@ class Student:
         if self.theta_f:
             pass
         else:
-            key = [i for i in range(self.numberOfConcepts)]
-            value = []
-            for i in key:
-                subAbilities = [round(random.random(), 2) for j in key]
-                value.append(subAbilities)
-            self.theta = dict(zip(key, value))
+            subthetas_pairs = [(i,j)
+                               for i in range(self.numberOfConcepts)
+                               for j in range(self.numberOfConcepts)]
+            subthetas = np.random.uniform(0,1, self.numberOfConcepts**2)
+            self.subthetas = [subthetas_pairs, np.around(subthetas, 3)]
+
+            # key = [i for i in range(self.numberOfConcepts)]
+            # value = []
+            # for i in key:
+            #     subAbilities = [round(random.random(), 2) for j in key]
+            #     value.append(subAbilities)
+            # self.theta = dict(zip(key, value))
 
     def generateAnswers(self):
         """ Randomly generate the student's response based on subabilities
@@ -58,21 +64,26 @@ class Student:
         Return: A 3d list (numberOfConcepts^2 * numberOfProblems) of the
             binary result of correctness. The answers describe the mapping
             from subconcepts ij to a result list of 0s and 1s that is normally
-            distributed based on θ_ij. We will also save the θ_ij for each 
+            distributed based on θ_ij. We will also save the θ_ij for each
             subconepts following the result list
         """
-        answers = []
-        for i in range(self.numberOfConcepts):
-            answers.append([])
-            for j in range(self.numberOfConcepts):
-                answers[i].append([])
-                for k in range(1):
-                    result = np.random.binomial(1, self.theta[i][j], 
-                            self.numberOfQuestions-1)
-                    answers[i][j].append(result.copy())
-                    answers[i][j].append(self.theta[i][j])
-        print(answers)
-        return answers
+        answers = np.random.binomial(1, self.subthetas[1], (self.numberOfQuestions, self.numberOfConcepts**2))
+        df = pd.DataFrame(answers)
+        df.columns = [(self.subthetas[0][i], self.subthetas[1][i]) for i in range(self.numberOfConcepts**2)]
+        self.df = df
+
+        # answers = []
+        # for i in range(self.numberOfConcepts):
+        #     answers.append([])
+        #     for j in range(self.numberOfConcepts):
+        #         answers[i].append([])
+        #         for k in range(1):
+        #             result = np.random.binomial(1, self.theta[i][j],
+        #                     self.numberOfQuestions-1)
+        #             answers[i][j].append(result.copy())
+        #             answers[i][j].append(self.theta[i][j])
+        # print(answers)
+        # return answers
 
     def saveData(self):
         """ Save the student's theta and response to a csv
