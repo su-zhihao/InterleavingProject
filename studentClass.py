@@ -1,4 +1,5 @@
 import random
+import numpy as np
 import pandas as pd
 
 class Student:
@@ -18,7 +19,7 @@ class Student:
             subabilities on each concept. Key: An integer, value: Float lists
 
     Methods:
-        generateTheta:
+        generateTheta: Generate a theta function if we have 
         generateAnswers:
         saveData:
     """
@@ -35,15 +36,15 @@ class Student:
         """ Randomly generate one's learning ability if not given
         Arg: A Student
         Modify: Update the subabilities dictionary if theta function is none
-            ex. {1: [0.39, 0.26], 2: [0.08, 0.75]} if numberConcepts = 2
+            ex. {0: [0.39, 0.26], 1: [0.08, 0.75]} if numberConcepts = 2
             Specifically, 0.26 means the student’s ability on a question related
-            to concept 1 after completing a question related to concept 2.
+            to concept 0 after completing a question related to concept 1.
         Return: None
         """
         if self.theta_f:
             pass
         else:
-            key = [i for i in range(1,self.numberOfConcepts+1)]
+            key = [i for i in range(self.numberOfConcepts)]
             value = []
             for i in key:
                 subAbilities = [round(random.random(), 2) for j in key]
@@ -51,19 +52,26 @@ class Student:
             self.theta = dict(zip(key, value))
 
     def generateAnswers(self):
-        """ Randomly generate the student's response to a given problem set
+        """ Randomly generate the student's response based on subabilities
         Arg: A Student
         Modify: None
-        Return: A 3d list (numberOfProblems-1 * numberOfConcepts^2) of the
-            binary result of correctness
+        Return: A 3d list (numberOfConcepts^2 * numberOfProblems) of the
+            binary result of correctness. The answers describe the mapping
+            from subconcepts ij to a result list of 0s and 1s that is normally
+            distributed based on θ_ij. We will also save the θ_ij for each 
+            subconepts following the result list
         """
         answers = []
-        for i in range(self.numberOfQuestions - 1):
+        for i in range(self.numberOfConcepts):
             answers.append([])
             for j in range(self.numberOfConcepts):
                 answers[i].append([])
-                for k in range(self.numberOfConcepts):
-                    answers[i][j].append(random.choice([0,1]))
+                for k in range(1):
+                    result = np.random.binomial(1, self.theta[i][j], 
+                            self.numberOfQuestions-1)
+                    answers[i][j].append(result.copy())
+                    answers[i][j].append(self.theta[i][j])
+        print(answers)
         return answers
 
     def saveData(self):
@@ -77,8 +85,8 @@ class Student:
         """
         subablities = []
         subablities.append(list(self.theta.values()))
-        response = self.generateAnswers()
-        studentData = subablities + response
+        result = self.generateAnswers()
+        studentData = subablities + result
         df = pd.DataFrame(data = studentData)
         df.columns += 1
         # print the dataframe for debug purposes
@@ -86,7 +94,7 @@ class Student:
         return df.to_csv('student.csv')
 
 # Test
-Patrick = Student(3,2)
+Patrick = Student(5,2)
 print("Number of concepts: " + str(Patrick.numberOfConcepts))
 print("Number of questions: " + str(Patrick.numberOfQuestions))
 Patrick.generateTheta()
