@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 class Student():
     def __init__(self, n_questions=10, c_number=2, theta_f=None):
